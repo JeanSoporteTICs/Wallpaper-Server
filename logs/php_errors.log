@@ -1,0 +1,160 @@
+[04-Sep-2025 22:39:43 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:39:43 Europe/Berlin] Acción: set_wallpaper
+[04-Sep-2025 22:39:43 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:39:43 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:39:43 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:39:45 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2052 ms: Couldn't connect to server
+[04-Sep-2025 22:39:45 Europe/Berlin] ❌ Webhook inaccesible
+[04-Sep-2025 22:43:39 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:43:39 Europe/Berlin] Acción: set_wallpaper
+[04-Sep-2025 22:43:39 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:43:39 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:43:39 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:43:41 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2045 ms: Couldn't connect to server
+[04-Sep-2025 22:43:41 Europe/Berlin] ❌ Webhook inaccesible
+[04-Sep-2025 22:44:15 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:44:15 Europe/Berlin] Acción: set_wallpaper
+[04-Sep-2025 22:44:15 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:44:15 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:44:15 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:44:17 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2037 ms: Couldn't connect to server
+[04-Sep-2025 22:44:17 Europe/Berlin] ❌ Webhook inaccesible
+[04-Sep-2025 22:44:41 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:44:41 Europe/Berlin] Acción: unlock
+[04-Sep-2025 22:44:41 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:44:41 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:44:41 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:44:43 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2031 ms: Couldn't connect to server
+[04-Sep-2025 22:44:43 Europe/Berlin] ❌ Webhook inaccesible
+[04-Sep-2025 22:45:33 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:45:33 Europe/Berlin] Acción: unlock
+[04-Sep-2025 22:45:33 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:45:33 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:45:33 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:45:35 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2046 ms: Couldn't connect to server
+[04-Sep-2025 22:45:35 Europe/Berlin] ❌ Webhook inaccesible
+[04-Sep-2025 22:51:33 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:51:33 Europe/Berlin] Acción: unlock
+[04-Sep-2025 22:51:33 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:51:33 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:51:33 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:51:35 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2046 ms: Couldn't connect to server
+[04-Sep-2025 22:51:35 Europe/Berlin] ❌ Webhook inaccesible
+[04-Sep-2025 22:56:18 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:56:18 Europe/Berlin] Acción: unlock
+[04-Sep-2025 22:56:18 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:56:18 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:56:18 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:56:20 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2045 ms: Couldn't connect to server
+[04-Sep-2025 22:56:20 Europe/Berlin] ❌ Webhook inaccesible
+[04-Sep-2025 22:56:40 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 22:56:40 Europe/Berlin] Acción: unlock
+[04-Sep-2025 22:56:40 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 22:56:40 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 22:56:40 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 22:56:40 Europe/Berlin] ✅ Verificación - HTTP Code: 501 | Error: 
+[04-Sep-2025 22:56:40 Europe/Berlin] 🚀 Enviando webhook a: http://10.6.160.92:8584/
+[04-Sep-2025 22:56:40 Europe/Berlin] 📦 Payload: {"action":"unlock","secret_key":"CAMBIA_ESTA_CLAVE_EN_TU_SERVIDOR"}
+[04-Sep-2025 22:56:40 Europe/Berlin] 📊 Respuesta HTTP: 200
+[04-Sep-2025 22:56:40 Europe/Berlin] ❌ Error: 
+[04-Sep-2025 22:56:40 Europe/Berlin] 📨 Response: {"ok": true, "action": "unlock"}
+[04-Sep-2025 22:56:40 Europe/Berlin] ✅ Webhook exitoso
+[04-Sep-2025 23:00:16 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[04-Sep-2025 23:00:16 Europe/Berlin] Acción: lock
+[04-Sep-2025 23:00:16 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[04-Sep-2025 23:00:16 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[04-Sep-2025 23:00:16 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[04-Sep-2025 23:00:18 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2052 ms: Couldn't connect to server
+[04-Sep-2025 23:00:18 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:08:31 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:08:31 Europe/Berlin] Acción: lock
+[05-Sep-2025 14:08:31 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:08:31 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:08:31 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:08:33 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2052 ms: Couldn't connect to server
+[05-Sep-2025 14:08:33 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:08:50 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:08:50 Europe/Berlin] Acción: unlock
+[05-Sep-2025 14:08:50 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:08:50 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:08:50 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:08:52 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2033 ms: Couldn't connect to server
+[05-Sep-2025 14:08:52 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:12:17 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:12:17 Europe/Berlin] Acción: unlock
+[05-Sep-2025 14:12:17 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:12:17 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:12:17 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:12:19 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2040 ms: Couldn't connect to server
+[05-Sep-2025 14:12:19 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:35:26 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:35:26 Europe/Berlin] Acción: lock
+[05-Sep-2025 14:35:26 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:35:26 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:35:26 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:35:28 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2041 ms: Couldn't connect to server
+[05-Sep-2025 14:35:28 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:37:15 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:37:15 Europe/Berlin] Acción: lock
+[05-Sep-2025 14:37:15 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:37:15 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:37:15 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:37:17 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2040 ms: Couldn't connect to server
+[05-Sep-2025 14:37:17 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:40:43 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:40:43 Europe/Berlin] Acción: lock
+[05-Sep-2025 14:40:43 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:40:43 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:40:43 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:40:45 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2040 ms: Couldn't connect to server
+[05-Sep-2025 14:40:45 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:41:29 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:41:29 Europe/Berlin] Acción: lock
+[05-Sep-2025 14:41:29 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:41:29 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:41:29 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:41:29 Europe/Berlin] ✅ Verificación - HTTP Code: 501 | Error: 
+[05-Sep-2025 14:41:29 Europe/Berlin] 🚀 Enviando webhook a: http://10.6.160.92:8584/
+[05-Sep-2025 14:41:29 Europe/Berlin] 📦 Payload: {"action":"lock","secret_key":"CAMBIA_ESTA_CLAVE_EN_TU_SERVIDOR"}
+[05-Sep-2025 14:41:29 Europe/Berlin] 📊 Respuesta HTTP: 200
+[05-Sep-2025 14:41:29 Europe/Berlin] ❌ Error: 
+[05-Sep-2025 14:41:29 Europe/Berlin] 📨 Response: {"ok": true, "action": "lock"}
+[05-Sep-2025 14:41:29 Europe/Berlin] ✅ Webhook exitoso
+[05-Sep-2025 14:56:04 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:56:04 Europe/Berlin] Acción: unlock
+[05-Sep-2025 14:56:04 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:56:04 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:56:04 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:56:06 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2038 ms: Couldn't connect to server
+[05-Sep-2025 14:56:06 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 14:59:00 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 14:59:00 Europe/Berlin] Acción: unlock
+[05-Sep-2025 14:59:00 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 14:59:00 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 14:59:00 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 14:59:02 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2047 ms: Couldn't connect to server
+[05-Sep-2025 14:59:02 Europe/Berlin] ❌ Webhook inaccesible
+[05-Sep-2025 15:00:12 Europe/Berlin] === INICIANDO ENVÍO A 1 CLIENTES ===
+[05-Sep-2025 15:00:12 Europe/Berlin] Acción: unlock
+[05-Sep-2025 15:00:12 Europe/Berlin] --- Procesando cliente: odin_e4a8dfa1b99e ---
+[05-Sep-2025 15:00:12 Europe/Berlin] ✅ URL generada: http://10.6.160.92:8584/
+[05-Sep-2025 15:00:12 Europe/Berlin] 🔍 Verificando conectividad a: http://10.6.160.92:8584/
+[05-Sep-2025 15:00:14 Europe/Berlin] ✅ Verificación - HTTP Code: 0 | Error: Failed to connect to 10.6.160.92 port 8584 after 2037 ms: Couldn't connect to server
+[05-Sep-2025 15:00:14 Europe/Berlin] ❌ Webhook inaccesible
+[06-Sep-2025 18:46:23 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:36 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:37 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:37 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:37 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:37 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:49 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:46:50 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 18:47:29 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 19:43:19 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 19:43:51 Europe/Berlin] PHP Notice:  session_start(): Ignoring session_start() because a session is already active in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 9
+[06-Sep-2025 19:46:48 Europe/Berlin] PHP Parse error:  syntax error, unexpected token "public" in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 10
+[06-Sep-2025 19:46:58 Europe/Berlin] PHP Parse error:  syntax error, unexpected token "public" in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 10
+[06-Sep-2025 19:47:13 Europe/Berlin] PHP Parse error:  syntax error, unexpected token "public" in C:\xampp\htdocs\wallpaper-server\controllers\ClientesController.php on line 10

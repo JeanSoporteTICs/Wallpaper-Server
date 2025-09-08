@@ -1,0 +1,46 @@
+[
+  {
+    "edificio": "CE",
+    "pisos": {
+      "Piso 1": ["Rayos",
+        "Policlínico Hematología",
+        "Recaudación",
+        "Policlínico Hematología Infantil",
+        "Admisión Container",
+        "Farmacia Ambulatoria",
+        "Estadística Exfonasa",
+        "Admisión Pecera 1",
+        "Navegadores en Red",
+        "Unidad de Memoria",
+        "Dental",
+        "Policlínico Cirugía",
+        "Policlínico Patología Mamaria",
+        "Policlínico Ginecología",
+        "Policlínico Pediatría",
+        "Policlínico Cirugía Infantil",
+        "Informática"
+      ],
+      "Piso 2": [
+        "Cardiología",
+        "Neurología"
+      ],
+      "Piso 3": [
+        "Administración",
+        "Dirección"
+      ]
+    }
+  },
+  {
+    "edificio": "Edificio Sur",
+    "pisos": {
+      "Piso 1": [
+        "Laboratorio",
+        "Rayos X"
+      ],
+      "Piso 2": [
+        "Consultorios",
+        "Rehabilitación"
+      ]
+    }
+  }
+]

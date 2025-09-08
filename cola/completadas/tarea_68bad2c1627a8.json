@@ -1,0 +1,21 @@
+{
+    "id": "tarea_68bad2c1627a8",
+    "accion": "lock",
+    "clientes": [
+        "odin_e4a8dfa1b99e"
+    ],
+    "estado": "completado",
+    "fecha_creacion": "2025-09-05T14:08:33+02:00",
+    "total": 1,
+    "completados": 1,
+    "fallidos": 0,
+    "fecha_inicio": "2025-09-05T14:08:34+02:00",
+    "fecha_fin": "2025-09-05T14:08:34+02:00",
+    "detalles": {
+        "odin_e4a8dfa1b99e": {
+            "estado": "\u00e9xito",
+            "comando_id": "cmd_68bad2c21ad10",
+            "accion": "lock"
+        }
+    }
+}

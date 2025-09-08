@@ -1,0 +1,21 @@
+{
+    "id": "tarea_68bad2d4e428b",
+    "accion": "unlock",
+    "clientes": [
+        "odin_e4a8dfa1b99e"
+    ],
+    "estado": "completado",
+    "fecha_creacion": "2025-09-05T14:08:52+02:00",
+    "total": 1,
+    "completados": 1,
+    "fallidos": 0,
+    "fecha_inicio": "2025-09-05T14:09:04+02:00",
+    "fecha_fin": "2025-09-05T14:09:04+02:00",
+    "detalles": {
+        "odin_e4a8dfa1b99e": {
+            "estado": "\u00e9xito",
+            "comando_id": "cmd_68bad2e01fc30",
+            "accion": "unlock"
+        }
+    }
+}
