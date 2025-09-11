@@ -77,6 +77,30 @@ if ($accion === 'set_wallpaper') {
   }
 }
 
+// Validación específica para show_message (sin colas)
+$title = '';
+$message = '';
+$timeoutSeconds = null;
+if ($accion === 'show_message') {
+  $title = trim((string)($_POST['title'] ?? ''));
+  $message = trim((string)($_POST['message'] ?? ''));
+  $t = isset($_POST['timeout_seconds']) ? (int)$_POST['timeout_seconds'] : 0;
+
+  if ($title === '' && $message === '') {
+    json_out(['error' => 'Debe indicar al menos Título o Mensaje'], 400);
+  }
+  if (mb_strlen($title) > 120) {
+    json_out(['error' => 'El título no puede superar 120 caracteres'], 400);
+  }
+  if (mb_strlen($message) > 4000) {
+    json_out(['error' => 'El mensaje no puede superar 4000 caracteres'], 400);
+  }
+  if ($t > 0) {
+    if ($t < 1 || $t > 3600) json_out(['error' => 'El cierre automático debe estar entre 1 y 3600 segundos'], 400);
+    $timeoutSeconds = $t;
+  }
+}
+
 $resultados = [];
 $clientesEnPending = [];
 
@@ -97,15 +121,24 @@ foreach ($clientesSeleccionados as $clienteId) {
   $webhookEnviado = false;
   if ($webhookUrl) {
     $payload = ['action' => $accion, 'secret_key' => SECRET_KEY];
-    if ($accion === 'set_wallpaper') $payload['image_name'] = $nombreArchivo;
+
+    if ($accion === 'set_wallpaper') {
+      $payload['image_name'] = $nombreArchivo;
+      $payload['style']      = $_POST['estilo'] ?? 'fill';
+    } elseif ($accion === 'show_message') {
+      if ($title !== '')   $payload['title'] = $title;
+      if ($message !== '') $payload['message'] = $message;
+      if ($timeoutSeconds !== null) $payload['timeout_seconds'] = $timeoutSeconds;
+    }
 
     $ch = curl_init();
     curl_setopt_array($ch, [
       CURLOPT_URL            => $webhookUrl,
       CURLOPT_POST           => true,
-      CURLOPT_POSTFIELDS     => json_encode($payload),
+      CURLOPT_POSTFIELDS     => json_encode($payload, JSON_UNESCAPED_UNICODE),
       CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
       CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_CONNECTTIMEOUT => 2,
       CURLOPT_TIMEOUT        => 3,
     ]);
     curl_exec($ch);
@@ -117,14 +150,20 @@ foreach ($clientesSeleccionados as $clienteId) {
   if ($webhookEnviado) {
     $resultados[$clienteId] = ['estado' => 'exito_webhook'];
   } else {
-    $cmdId = agregarComandoPendiente($accion, $clienteId, $nombreArchivo);
-    $resultados[$clienteId] = ['estado' => 'pendiente', 'comando_id' => $cmdId];
-    $clientesEnPending[] = $clienteId;
+    // IMPORTANTE: show_message NO SE ENCOLA
+    if ($accion === 'show_message') {
+      $resultados[$clienteId] = ['estado' => 'fallo', 'error' => 'No entregado por webhook'];
+    } else {
+      $cmdId = agregarComandoPendiente($accion, $clienteId, $nombreArchivo);
+      $resultados[$clienteId] = ['estado' => 'pendiente', 'comando_id' => $cmdId];
+      $clientesEnPending[] = $clienteId;
+    }
   }
 }
 
 json_out([
   'success'            => true,
+  'accion'             => $accion,
   'resultados'         => $resultados,
   'clientes_en_pending'=> $clientesEnPending
 ]);

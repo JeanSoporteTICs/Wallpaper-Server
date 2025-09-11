@@ -6,14 +6,5 @@
     "mac": "48-EA-62-CD-45-C5",
     "locked": false,
     "last_seen": "2025-09-08 08:49:54 AM -03",
-    "pending": [
-        {
-            "comando_id": "cmd_68bec32a4ee097.22168751",
-            "action": "set_wallpaper",
-            "estado": "pendiente",
-            "timestamp": "2025-09-08T13:51:06+02:00",
-            "image_name": "wallpaper_68bec3274b55f0.76254489.jpg",
-            "style": "fit"
-        }
-    ]
+    "pending": []
 }

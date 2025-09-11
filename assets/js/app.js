@@ -77,6 +77,9 @@ document.addEventListener('DOMContentLoaded', () => {
       t = setTimeout(() => fn(...args), wait);
     };
   };
+// Helpers para alternar visibilidad (usa la clase .hidden)
+const _show = (el) => el && el.classList.remove('hidden');
+const _hide = (el) => el && el.classList.add('hidden');
 
   const normalizeText = (t) =>
     String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -134,61 +137,117 @@ document.addEventListener('DOMContentLoaded', () => {
   // ------------------------------
   // Drag & Drop archivo
   // ------------------------------
-  function initDragAndDrop() {
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-      fileDropArea.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
-    });
-    ['dragenter', 'dragover'].forEach(evt => fileDropArea.addEventListener(evt, () => fileDropArea.classList.add('active')));
-    ['dragleave', 'drop'].forEach(evt => fileDropArea.addEventListener(evt, () => fileDropArea.classList.remove('active')));
+function initDragAndDrop() {
+  if (!fileDropArea || !fileInput) return;
 
-    fileDropArea.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
-    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
-  }
+  // Evita el comportamiento por defecto y marca el área
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+    fileDropArea.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
+  });
+  ['dragenter', 'dragover'].forEach(evt =>
+    fileDropArea.addEventListener(evt, () => fileDropArea.classList.add('active'))
+  );
+  ['dragleave', 'drop'].forEach(evt =>
+    fileDropArea.addEventListener(evt, () => fileDropArea.classList.remove('active'))
+  );
 
-  function handleFiles(files) {
-    if (!files || !files.length) return;
-    const file = files[0];
-
-    const size = file.size > 1024 * 1024
-      ? (file.size / (1024 * 1024)).toFixed(2) + ' MB'
-      : (file.size / 1024).toFixed(2) + ' KB';
-    fileInfo.innerHTML = `<i class="bi bi-file-image"></i> ${file.name} (${size})`;
-
-    // Auto-seleccionar la acción de cambiar fondo
-    const accion = document.getElementById('accion');
-    accion.value = 'set_wallpaper';
-    mostrarOpciones();
-
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        imgPreview.src = ev.target.result;
-        imgPreview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    } else {
-      imgPreview.src = '';
-      imgPreview.style.display = 'none';
-    }
-  }
+  // Importante: NO agregamos listeners de drop/change aquí;
+  // ya los maneja el bloque "MÍNIMO NECESARIO" más abajo.
+}
 
   // ------------------------------
   // Opciones según acción
   // ------------------------------
-  window.mostrarOpciones = function () {
-    const accion = document.getElementById('accion').value;
-    const estiloDiv = document.getElementById('estiloDiv');
-    const fondo = document.getElementById('fondo');
+window.mostrarOpciones = function () {
+  const accion         = document.getElementById('accion')?.value || '';
+  const estiloDiv      = document.getElementById('estiloDiv');
+  const paramWallpaper = document.getElementById('paramWallpaper');
+  const msgDiv         = document.getElementById('mensajeDiv');          // parámetros de mensaje (col 2)
+  const prevWall       = document.getElementById('previewWallpaper');    // vista imagen (col 3)
+  // const prevMsg     = document.getElementById('previewMessage');      // si lo usas
+  const fondo          = document.getElementById('fondo');
 
-    if (accion === 'set_wallpaper') {
-      estiloDiv.classList.remove('hidden');
-      fondo.required = true;
-    } else {
-      estiloDiv.classList.add('hidden');
-      fondo.required = false;
+  if (accion === 'set_wallpaper') {
+    _show(estiloDiv);
+    _show(paramWallpaper);
+    _hide(msgDiv);
+
+    _show(prevWall);
+    // _hide(prevMsg);
+
+    if (fondo) fondo.required = true;
+  } else if (accion === 'show_message') {
+    _hide(estiloDiv);
+    _hide(paramWallpaper);
+    _show(msgDiv);
+
+    _hide(prevWall);
+    // _show(prevMsg);
+
+    if (fondo) fondo.required = false;
+  } else { // lock / unlock / sin selección
+    _hide(estiloDiv);
+    _hide(paramWallpaper);
+    _hide(msgDiv);
+    _hide(prevWall);
+    // _hide(prevMsg);
+
+    if (fondo) fondo.required = false;
+  }
+};
+
+
+
+function validarMensaje() {
+  const t = (document.getElementById('msgTitle')?.value || '').trim();
+  const m = (document.getElementById('msgBody')?.value  || '').trim();
+  const timeout = (document.getElementById('msgTimeout')?.value || '').trim();
+
+  if (!t && !m) {
+    mostrarAlerta('Indica al menos Título o Mensaje.', 'warning');
+    return false;
+  }
+  if (t.length > 120) {
+    mostrarAlerta('El título no puede superar 120 caracteres.', 'warning');
+    return false;
+  }
+  if (m.length > 4000) {
+    mostrarAlerta('El mensaje no puede superar 4000 caracteres.', 'warning');
+    return false;
+  }
+  if (timeout !== '') {
+    const n = parseInt(timeout, 10);
+    if (Number.isNaN(n) || n <= 0 || n > 3600) {
+      mostrarAlerta('El cierre automático debe ser un número entre 1 y 3600 segundos.', 'warning');
+      return false;
     }
-  };
+  }
+  return true;
+}
+// (function initPreviewMessage(){
+//   const title = document.getElementById('msgTitle');
+//   const body  = document.getElementById('msgBody');
+//   const tout  = document.getElementById('msgTimeout');
+//   const c     = document.getElementById('msgCount');
+//   const pvT   = document.getElementById('pvMsgTitle');
+//   const pvB   = document.getElementById('pvMsgBody');
+//   const pvX   = document.getElementById('pvMsgExtra');
 
+//   if (!pvT || !pvB || !pvX) return;
+
+//   const upd = () => {
+//     pvT.textContent = (title?.value || '').trim();
+//     const raw = (body?.value || '');
+//     pvB.innerHTML = raw.trim().length ? raw.replace(/\n/g, "<br>") : '<span class="text-muted">Sin contenido…</span>';
+//     pvX.textContent = tout?.value ? `Cierre automático: ${tout.value} s` : '';
+//     if (c && body) c.textContent = body.value.length;
+//   };
+
+//   title?.addEventListener('input', upd);
+//   body?.addEventListener('input', upd);
+//   tout?.addEventListener('input', upd);
+//   upd();
+// })();
   function validarArchivoWallpaper() {
     const archivoInput = document.getElementById('fondo');
     if (archivoInput.files.length === 0) {
@@ -207,6 +266,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return true;
   }
+// === MÍNIMO NECESARIO: input + drop usan TU validarArchivoWallpaper() ===
+(function () {
+  const input = document.getElementById('fondo');
+  const drop  = document.getElementById('fileDropArea');
+  const img   = document.getElementById('imgPreview');
+  const info  = document.getElementById('fileInfo');
+  const prev  = document.getElementById('previewWallpaper');
+
+  if (!input) return;
+
+  const reset = () => {
+    if (info) info.textContent = 'Arrastra una imagen o haz clic aquí';
+    if (img)  { img.src = ''; img.style.display = 'none'; }
+    if (prev) prev.classList.add('hidden');
+    input.value = '';
+  };
+
+  const previewOK = () => {
+    const f = input.files?.[0];
+    if (!f || !img) return;
+    if (info) info.textContent = `${f.name} (${(f.size/1024/1024).toFixed(2)} MB)`;
+    img.src = URL.createObjectURL(f);
+    img.style.display = 'block';
+    prev?.classList.remove('hidden');
+  };
+
+  input.addEventListener('change', () => {
+    if (validarArchivoWallpaper()) previewOK(); else reset();
+  });
+
+  if (drop) {
+    drop.addEventListener('dragover', e => e.preventDefault());
+    drop.addEventListener('drop', e => {
+      e.preventDefault();
+      const file = e.dataTransfer?.files?.[0];
+      if (!file) return;
+
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+
+      if (validarArchivoWallpaper()) previewOK(); else reset();
+    });
+  }
+})();
 
   // ------------------------------
   // Ubicaciones (selects dependientes)
@@ -574,35 +678,50 @@ document.addEventListener('DOMContentLoaded', () => {
   const accion = document.getElementById('accion').value;
   if (!accion) { mostrarAlerta('Seleccione una acción', 'warning'); return; }
   if (accion === 'set_wallpaper' && !validarArchivoWallpaper()) return;
+  if (accion === 'show_message' && !validarMensaje()) return;  // 👈 NUEVO
 
-  // Mostrar SIEMPRE el modal y ocultar overlay para no taparlo
+  // Mostrar modal y deshabilitar
   document.querySelector('.loading-overlay').style.display = 'none';
   document.getElementById('submitBtn').disabled = true;
 
   abrirModalProgreso('Preparando envío...', 0, 0, total);
-  await animateProgressTo(15, 300); // animación suave
+  await animateProgressTo(15, 300);
 
   try {
-    // Armar FormData con TODOS los clientes (1 → 1000)
     const form = document.getElementById('mainForm');
     const fd = new FormData();
     fd.append('csrf_token', form.querySelector('input[name="csrf_token"]').value);
     fd.append('accion', accion);
 
+    // set_wallpaper
     const estilo = document.getElementById('estilo');
     if (accion === 'set_wallpaper' && estilo) fd.append('estilo', estilo.value);
-
     const archivo = document.getElementById('fondo').files[0];
     if (accion === 'set_wallpaper' && archivo) fd.append('fondo', archivo);
 
-    // MUY IMPORTANTE: adjuntar todos los clientes seleccionados
+    // show_message  👇 NUEVO
+    if (accion === 'show_message') {
+      const t  = (document.getElementById('msgTitle')?.value || '').trim();
+      const m  = (document.getElementById('msgBody')?.value  || '').trim();
+      const to = (document.getElementById('msgTimeout')?.value || '').trim();
+      if (t)  fd.append('title', t);
+      if (m)  fd.append('message', m);
+      if (to) fd.append('timeout_seconds', to);
+    }
+
+    // clientes
     for (const cb of seleccionados) fd.append('clientes[]', cb.value);
 
     actualizarModalProgreso(20, 'Enviando al servidor...');
     await animateProgressTo(35, 500);
 
-    // ÚNICA llamada al backend
-    const res = await fetch(form.action, { method: 'POST', body: fd });
+    // Llamada al backend (con cookies/sesión)
+    const res = await fetch(form.action, {
+      method: 'POST',
+      body: fd,
+      credentials: 'same-origin',
+      headers: { 'Accept': 'application/json' }
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
@@ -614,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Si todo fue inmediato (sin pendientes), cerrar rápido
+    // Si no hay pendientes (p. ej. show_message NO encola), cerrar rápido
     const comandoIds = extraerComandoIds(data);
     if (!comandoIds.length) {
       actualizarModalProgreso(100, 'Completado');
@@ -627,37 +746,28 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Hay pendientes → progreso real con polling
-    // Hay pendientes → progreso real con polling
-actualizarModalProgreso(50, `En cola (${comandoIds.length})...`);
+    // Con pendientes → polling (tu flujo original)
+    actualizarModalProgreso(50, `En cola (${comandoIds.length})...`);
+    monitorearProgresoMultiples(
+      comandoIds,
+      (finalData, meta) => {
+        const completados = Number(finalData?.completados ?? 0);
+        const total       = Number(finalData?.total ?? comandoIds.length);
+        const pct         = total > 0 ? Math.round((completados / total) * 100) : 0;
 
-monitorearProgresoMultiples(
-  comandoIds,
-  (finalData, meta) => {
-    const completados = Number(finalData?.completados ?? 0);
-    const total       = Number(finalData?.total ?? comandoIds.length);
-    const pct         = total > 0 ? Math.round((completados / total) * 100) : 0;
+        const titulo = (meta?.timedOut || meta?.stalled) ? 'Finalizado (incompleto)' : 'Completado';
+        actualizarModalProgreso(pct, titulo, completados, total);
 
-    const titulo = (meta?.timedOut || meta?.stalled) ? 'Finalizado (incompleto)' : 'Completado';
-    actualizarModalProgreso(pct, titulo, completados, total);
-
-    const resumen = generarResumenTareas(finalData);
-    setTimeout(() => {
-      cerrarModalProgreso();
-      mostrarAlerta(resumen, (meta?.timedOut || meta?.stalled) ? 'warning' : 'success', 10000);
-      limpiarFormularioCompleto();
-      document.getElementById('submitBtn').disabled = false;
-    }, 800);
-  },
-  {
-    // Consulta cada 2s
-    pollInterval: 2000,
-
-    // Deja que el monitor calcule timeout/idle coherentes con expirySec
-    expirySec: 45
-  }
-);
-
+        const resumen = generarResumenTareas(finalData);
+        setTimeout(() => {
+          cerrarModalProgreso();
+          mostrarAlerta(resumen, (meta?.timedOut || meta?.stalled) ? 'warning' : 'success', 10000);
+          limpiarFormularioCompleto();
+          document.getElementById('submitBtn').disabled = false;
+        }, 800);
+      },
+      { pollInterval: 2000, expirySec: 45 }
+    );
 
   } catch (err) {
     console.error(err);
@@ -668,24 +778,23 @@ monitorearProgresoMultiples(
   }
 }
 
-  
 // });
 
 
-function removeClientRowAndRefresh(tr) {
-  // Elimina de arrays de memoria usados por filtros/orden/paginación
-  const idxAll = allClientes.indexOf(tr);
-  if (idxAll >= 0) allClientes.splice(idxAll, 1);
+// function removeClientRowAndRefresh(tr) {
+//   // Elimina de arrays de memoria usados por filtros/orden/paginación
+//   const idxAll = allClientes.indexOf(tr);
+//   if (idxAll >= 0) allClientes.splice(idxAll, 1);
 
-  const idxFilt = filteredClientes.indexOf(tr);
-  if (idxFilt >= 0) filteredClientes.splice(idxFilt, 1);
+//   const idxFilt = filteredClientes.indexOf(tr);
+//   if (idxFilt >= 0) filteredClientes.splice(idxFilt, 1);
 
-  tr.remove();
-  // Re-render y actualizar UI
-  renderClientes();
-  setupPagination();
-  actualizarContadorClientes();
-}
+//   tr.remove();
+//   // Re-render y actualizar UI
+//   renderClientes();
+//   setupPagination();
+//   actualizarContadorClientes();
+// }
 
 
 
@@ -920,6 +1029,18 @@ async function animateProgressTo(targetPct, durationMs = 400) {
     // 5) búsqueda
     const bq = document.getElementById('busqueda');
     if (bq) bq.value = '';
+
+     // 5) titutlo
+    const ti = document.getElementById('msgTitle');
+    if (ti) ti.value = '';
+
+     // 5) mensaje 
+    const me = document.getElementById('msgBody');
+    if (me) me.value = '';
+     // 5) mensaje 
+    const time = document.getElementById('msgTimeout');
+    if (time) time.value = '';
+
 
     // 6) selects de ubicación del modal
     const selE = document.getElementById('edificio');

@@ -154,6 +154,66 @@ log.info("Logger configurado correctamente")
 # UTILIDADES
 # =============================
 
+# =============================
+# MENSAJES EN VENTANA (ALWAYS-ON-TOP)
+# =============================
+def _show_message_window(title: str, message: str, timeout_ms: int | None = None):
+    try:
+        # Creación de una ventana Tk dedicada (no bloquea el proceso principal)
+        root = tk.Tk()
+        root.title(title or "Mensaje del sistema")
+
+        # Tamaño y posición centrada
+        width, height = 480, 220
+        try:
+            root.geometry(f"{width}x{height}")
+        except Exception:
+            pass
+
+        # Siempre al frente y por encima de todo
+        try:
+            root.attributes("-topmost", True)
+            try:
+              root.after(100, lambda: (root.focus_force(), root.lift()))
+            except Exception:
+                pass
+            root.lift()
+        except Exception as e:
+            log.warning(f"No se pudo forzar topmost: {e}")
+
+        # Interfaz simple
+        frm = ttk.Frame(root, padding=16)
+        frm.pack(fill="both", expand=True)
+
+        lbl_title = ttk.Label(frm, text=title or "Mensaje", font=("Segoe UI", 12, "bold"))
+        lbl_title.pack(anchor="w", pady=(0, 8))
+
+        txt = tk.Text(frm, height=6, wrap="word")
+        txt.insert("1.0", message or "")
+        txt.config(state="disabled")
+        txt.pack(fill="both", expand=True)
+
+        btn = ttk.Button(frm, text="Cerrar", command=root.destroy)
+        btn.pack(pady=(12, 0))
+
+        # Cierre automático opcional
+        if timeout_ms and isinstance(timeout_ms, int) and timeout_ms > 0:
+            root.after(timeout_ms, lambda: root.destroy())
+
+        root.mainloop()
+    except Exception as e:
+        log.error(f"Error mostrando ventana de mensaje: {e}")
+
+
+def show_message_async(title: str, message: str, timeout_seconds: int | None = None):
+    """Lanza la ventana de mensaje en un hilo aparte para no bloquear."""
+    try:
+        ms = int(timeout_seconds * 1000) if timeout_seconds else None
+    except Exception:
+        ms = None
+    t = threading.Thread(target=_show_message_window, args=(title, message, ms), daemon=True)
+    t.start()
+
 
 def ensure_app_folder():
     try:
@@ -442,12 +502,19 @@ def procesar_accion_pendiente(accion: dict):
         elif action_type == "unlock":
             unlock_wallpaper_option()
             return True
+        elif action_type == "show_message":
+            title = accion.get("title", "Mensaje del sistema")
+            message = accion.get("message", "")
+            timeout = accion.get("timeout_seconds")  # opcional
+            show_message_async(title, message, timeout)
+            return True
         else:
             log.warning(f"Acción pendiente desconocida: {action_type}")
             return False
     except Exception as e:
         log.error(f"Error procesando acción pendiente {accion}: {e}")
         return False
+      
 
 
 def limpiar_pendientes_servidor(cliente_id):
@@ -652,6 +719,13 @@ class WebhookHandler(BaseHTTPRequestHandler):
                     result["pending"] = True
                     result["message"] = "Acción añadida a pendientes"
                     result["ok"] = True
+            elif action == "show_message":
+                        title = payload.get("title", "Mensaje del sistema")
+                        message = payload.get("message", "")
+                        timeout = payload.get("timeout_seconds")  # opcional
+                        show_message_async(title, message, timeout)
+                        result["ok"] = True
+                        ejecutado_directamente = True
         except Exception as e:
             log.error(f"Error procesando acción '{action}': {e}")
             result["error"] = str(e)
