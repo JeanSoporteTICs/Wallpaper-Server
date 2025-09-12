@@ -18,6 +18,7 @@ import tempfile
 import shutil
 import getpass
 import tkinter as tk
+import os, json, urllib.request, urllib.error
 from tkinter import ttk, messagebox
 from ctypes import wintypes as wt
 from zoneinfo import ZoneInfo
@@ -121,6 +122,223 @@ def get_secret_from_cfg(cfg: dict | None) -> str | None:
         return cfg["secret_key"]
     return None
 
+
+# =============================
+# Descargar logo
+# =============================
+
+
+def _safe_guardar_json(path, data):
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return True
+    except Exception as e:
+        try: log.error(f"Guardar JSON falló: {e}")
+        except: pass
+        return False
+
+def _get_local_app_dir():
+    base = os.environ.get("LOCALAPPDATA") or os.path.expanduser(r"~\AppData\Local")
+    d = os.path.join(base, "wallpaper-cliente")
+    os.makedirs(d, exist_ok=True)
+    return d
+
+def _guess_logo_urls(base_url: str):
+    base = base_url.rstrip("/")
+    urls = []
+
+    # Variante en subcarpeta: /fondos/logo/logo(.ext)  ← TU CASO
+    urls.append(f"{base}/fondos/logo/logo")  # sin extensión
+    for ext in (".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".ico"):
+        urls.append(f"{base}/fondos/logo/logo{ext}")
+
+    return urls
+
+def _ext_from_content_type(ct: str) -> str:
+    ct = (ct or "").lower()
+    if "png" in ct:   return ".png"
+    if "jpeg" in ct or "jpg" in ct: return ".jpg"
+    if "webp" in ct:  return ".webp"
+    if "gif" in ct:   return ".gif"
+    if "bmp" in ct:   return ".bmp"
+    return ".png"
+
+def _download_logo_to_local(base_url: str, dest_dir: str) -> str | None:
+    for url in _guess_logo_urls(base_url):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "WallpaperCliente/1.1"})
+            with urllib.request.urlopen(req, timeout=10) as r:
+                data = r.read()
+                # decidir extensión
+                ext = os.path.splitext(url.split("?")[0])[1].lower()
+                if ext not in (".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp"):
+                    ext = _ext_from_content_type(r.headers.get("Content-Type", ""))
+                path = os.path.join(dest_dir, f"logo{ext}")
+                with open(path, "wb") as f:
+                    f.write(data)
+                return path
+        except urllib.error.HTTPError as e:
+            # probar siguiente candidato
+            continue
+        except Exception as e:
+            try: log.warning(f"No se pudo descargar {url}: {e}")
+            except: pass
+            continue
+    return None
+
+
+def _detect_ext_from_bytes(data: bytes, content_type: str | None) -> str | None:
+    ct = (content_type or "").lower()
+    sig = data[:12]
+    if sig.startswith(b"\x89PNG\r\n\x1a\n"):         return ".png"
+    if sig[:3] == b"\xff\xd8\xff":                   return ".jpg"
+    if sig[:6] in (b"GIF87a", b"GIF89a"):            return ".gif"
+    if sig[:2] == b"BM":                             return ".bmp"
+    if sig[:4] == b"\x00\x00\x01\x00":               return ".ico"
+    if sig[:4] == b"RIFF" and data[8:12] == b"WEBP": return ".webp"
+    # Content-Type como último recurso
+    if ct.startswith("image/"):
+        if "png"  in ct: return ".png"
+        if "jpeg" in ct or "jpg" in ct: return ".jpg"
+        if "gif"  in ct: return ".gif"
+        if "bmp"  in ct: return ".bmp"
+        if "webp" in ct: return ".webp"
+        if "ico"  in ct or "x-icon" in ct: return ".ico"
+    return None
+
+def _candidate_logo_urls(base_url: str):
+    base = base_url.rstrip("/")
+    yield f"{base}/fondos/logo/logo"
+    for ext in (".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".ico"):
+        yield f"{base}/fondos/logo/logo{ext}"
+
+def _get_local_app_dir():
+    base = os.environ.get("LOCALAPPDATA") or os.path.expanduser(r"~\\AppData\\Local")
+    d = os.path.join(base, "wallpaper-cliente")
+    os.makedirs(d, exist_ok=True)
+    return d
+
+def download_logo(cfg: dict, *, persist: bool = True) -> str | None:
+    """Descarga un LOGO válido (imagen real) desde /fondos/logo/logo[.ext]."""
+    try:
+        base = build_base_url(cfg)
+    except Exception:
+        base = (cfg.get("server_base_url") or "").rstrip("/")
+        if not base:
+            try: log.warning("download_logo: no hay base_url")
+            except: pass
+            return None
+
+    dest_dir = _get_local_app_dir()
+
+    for url in _candidate_logo_urls(base):
+        try:
+            req = urllib.request.Request(
+                url,
+                headers={"User-Agent": "WallpaperCliente/1.1", "Accept": "image/*"}
+            )
+            with urllib.request.urlopen(req, timeout=10) as r:
+                ct = r.headers.get("Content-Type", "").lower()
+                data = r.read()
+
+            # Descarta HTML/JSON o respuestas mínimas
+            if ("text" in ct) or ("html" in ct) or ("json" in ct) or len(data) < 24:
+                try: log.debug(f"download_logo: descartado {url} (CT={ct}, len={len(data)})")
+                except: pass
+                continue
+
+            ext = _detect_ext_from_bytes(data, ct)
+            if not ext:
+                try: log.debug(f"download_logo: descartado {url} (bytes no imagen)")
+                except: pass
+                continue
+
+            path = os.path.join(dest_dir, f"logo{ext}")
+            with open(path, "wb") as f:
+                f.write(data)
+
+            if persist:
+                cfg["logo_path"] = path
+                try:
+                    if "guardar_json" in globals():
+                        guardar_json(CONFIG_FILE, cfg)
+                    else:
+                        with open(CONFIG_FILE, "w", encoding="utf-8") as jf:
+                            json.dump(cfg, jf, ensure_ascii=False, indent=2)
+                except Exception as e:
+                    try: log.warning(f"download_logo: no se pudo persistir config: {e}")
+                    except: pass
+
+            try: log.info(f"download_logo: OK {url} -> {path} (CT={ct})")
+            except: pass
+            return path
+
+        except urllib.error.HTTPError as e:
+            try: log.debug(f"download_logo: {url} -> HTTP {e.code}")
+            except: pass
+            continue
+        except Exception as e:
+            try: log.debug(f"download_logo: fallo {url}: {e}")
+            except: pass
+            continue
+
+    try: log.warning("download_logo: no se pudo obtener un logo válido")
+    except: pass
+    return None
+import os
+
+def _is_valid_image_file(path: str) -> bool:
+    """True si el archivo es una imagen real."""
+    if not path or not os.path.isfile(path):
+        return False
+    try:
+        # Con Pillow validamos bien y rápido
+        try:
+            from PIL import Image  # type: ignore
+            with Image.open(path) as im:
+                im.verify()
+            return True
+        except Exception:
+            # Fallback: firma binaria básica
+            with open(path, "rb") as f:
+                head = f.read(12)
+            if head.startswith(b"\x89PNG\r\n\x1a\n"):         return True  # PNG
+            if head[:3] == b"\xff\xd8\xff":                   return True  # JPEG
+            if head[:6] in (b"GIF87a", b"GIF89a"):            return True  # GIF
+            if head[:2] == b"BM":                             return True  # BMP
+            if head[:4] == b"\x00\x00\x01\x00":               return True  # ICO
+            if head[:4] == b"RIFF" and head[8:12] == b"WEBP": return True  # WEBP
+            return False
+    except Exception:
+        return False
+
+def ensure_valid_logo(cfg: dict) -> str | None:
+    """
+    Si cfg['logo_path'] no existe o NO es imagen válida:
+      - lo elimina (si existe)
+      - re-descarga usando download_logo(cfg)
+      - persiste la ruta válida en config
+    """
+    lp = (cfg.get("logo_path") or "").strip()
+    if not _is_valid_image_file(lp):
+        try:
+            if lp and os.path.isfile(lp):
+                os.remove(lp)
+                try: log.info(f"Logo inválido eliminado: {lp}")
+                except: pass
+        except Exception as e:
+            try: log.warning(f"No se pudo eliminar logo inválido: {e}")
+            except: pass
+        newp = download_logo(cfg)
+        if newp and _is_valid_image_file(newp):
+            cfg["logo_path"] = newp
+            try: guardar_json(CONFIG_FILE, cfg)
+            except Exception: pass
+            return newp
+        return None
+    return lp
+
 # =============================
 # LOGGING
 # =============================
@@ -157,62 +375,166 @@ log.info("Logger configurado correctamente")
 # =============================
 # MENSAJES EN VENTANA (ALWAYS-ON-TOP)
 # =============================
-def _show_message_window(title: str, message: str, timeout_ms: int | None = None):
+# =============================
+# MENSAJES EN PRIMER PLANO
+# =============================
+
+WM_CLOSE = 0x0010
+def _close_prev_message_window(window_title="Comunicado Institucional"):
     try:
-        # Creación de una ventana Tk dedicada (no bloquea el proceso principal)
-        root = tk.Tk()
-        root.title(title or "Mensaje del sistema")
+        hwnd = ctypes.windll.user32.FindWindowW(None, window_title)
+        if hwnd:
+            ctypes.windll.user32.PostMessageW(hwnd, WM_CLOSE, 0, 0)
+            time.sleep(0.12)  # pequeño respiro
+    except Exception:
+        pass
 
-        # Tamaño y posición centrada
-        width, height = 480, 220
+def _show_message_window(title: str, message: str, timeout_seconds: int | None = None):
+    try:
+        import tkinter as tk
+        import threading, os
         try:
-            root.geometry(f"{width}x{height}")
+            from PIL import Image, ImageTk  # type: ignore
+            _HAS_PIL = True
         except Exception:
-            pass
+            _HAS_PIL = False
 
-        # Siempre al frente y por encima de todo
-        try:
-            root.attributes("-topmost", True)
+        WINDOW_TITLE_FIXED = "Comunicado Institucional"
+        WIDTH, HEIGHT = 500, 300
+        MAX_LOGO_W, MAX_LOGO_H = 200, 100
+
+        def _load_logo_any(path: str | None, max_w: int, max_h: int, master=None):
+            if not path or not os.path.isfile(path):
+                return None, (0, 0)
             try:
-              root.after(100, lambda: (root.focus_force(), root.lift()))
+                if _HAS_PIL:
+                    img = Image.open(path)
+                    try: img.seek(0)
+                    except Exception: pass
+                    img = img.convert("RGBA")
+                    w, h = img.size
+                    scale = min(max_w / max(w,1), max_h / max(h,1), 1.0)
+                    new_size = (max(1,int(w*scale)), max(1,int(h*scale)))
+                    if new_size != (w, h):
+                        img = img.resize(new_size, Image.LANCZOS)
+                    ph = ImageTk.PhotoImage(img, master=master)  # 👈 asocia al root
+                    return ph, new_size
+                else:
+                    ext = os.path.splitext(path)[1].lower()
+                    if ext not in (".png", ".gif"):
+                        return None, (0,0)
+                    ph = tk.PhotoImage(file=path.replace("\\","/"), master=master)  # 👈
+                    iw, ih = ph.width(), ph.height()
+                    fx = max(1, (iw + max_w - 1)//max_w)
+                    fy = max(1, (ih + max_h - 1)//max_h)
+                    if fx > 1 or fy > 1:
+                        ph = ph.subsample(fx, fy)
+                    return ph, (ph.width(), ph.height())
+            except Exception as e:
+                try: log.warning(f"No se pudo cargar logo ({path}): {e}")
+                except Exception: pass
+                return None, (0,0)
+
+        # cierra una ventana previa, si existe
+        _close_prev_message_window(WINDOW_TITLE_FIXED)
+
+        def _run():
+            # --- root primero ---
+            root = tk.Tk()
+            root.title(WINDOW_TITLE_FIXED)
+            root.attributes("-topmost", True)
+            root.resizable(False, False)
+
+            # centrar
+            try:
+                sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
+                x, y = (sw//2 - WIDTH//2), (sh//3 - HEIGHT//2)
+            except Exception:
+                x, y = 200, 200
+            root.geometry(f"{WIDTH}x{HEIGHT}+{x}+{y}")
+
+            frm = tk.Frame(root, padx=12, pady=10)
+            frm.pack(fill="both", expand=True)
+
+            # obtener ruta del logo
+            logo_path = None
+            try:
+                cfg = cargar_json(CONFIG_FILE) or {}
+                lp = (cfg.get("logo_path") or "").strip()
+                if lp and os.path.isfile(lp):
+                    logo_path = lp
+                elif "download_logo" in globals():
+                    nuevo = download_logo(cfg)
+                    if nuevo and os.path.isfile(nuevo):
+                        logo_path = nuevo
             except Exception:
                 pass
-            root.lift()
-        except Exception as e:
-            log.warning(f"No se pudo forzar topmost: {e}")
 
-        # Interfaz simple
-        frm = ttk.Frame(root, padding=16)
-        frm.pack(fill="both", expand=True)
+            # GRID 2 columnas: col 0 logo, col 1 título + texto
+            logo_img, (lw, lh) = _load_logo_any(logo_path, MAX_LOGO_W, MAX_LOGO_H, master=root)
+            col0_min = max(60, lw or 60)
+            frm.grid_columnconfigure(0, minsize=col0_min)
+            frm.grid_columnconfigure(1, weight=1)
+            frm.grid_rowconfigure(1, weight=1)
 
-        lbl_title = ttk.Label(frm, text=title or "Mensaje", font=("Segoe UI", 12, "bold"))
-        lbl_title.pack(anchor="w", pady=(0, 8))
+            # fila 0: título (en col 1)
+            wrap = max(200, WIDTH - col0_min - 60)
+            lbl_title = tk.Label(
+                frm, text=(title or ""), font=("Segoe UI", 12, "bold"),
+                wraplength=wrap, justify="left", anchor="w"
+            )
+            lbl_title.grid(row=0, column=1, sticky="nw", pady=(2,6))
 
-        txt = tk.Text(frm, height=6, wrap="word")
-        txt.insert("1.0", message or "")
-        txt.config(state="disabled")
-        txt.pack(fill="both", expand=True)
+            # fila 1: logo (col 0) + texto con scroll (col 1)
+            if logo_img is not None:
+                lbl_logo = tk.Label(frm, image=logo_img)
+                lbl_logo.image = logo_img
+                lbl_logo.grid(row=1, column=0, sticky="n", padx=(0,8))
 
-        btn = ttk.Button(frm, text="Cerrar", command=root.destroy)
-        btn.pack(pady=(12, 0))
+            body = tk.Frame(frm)
+            body.grid(row=1, column=1, sticky="nsew")
+            body.grid_columnconfigure(0, weight=1)
+            body.grid_rowconfigure(0, weight=1)
 
-        # Cierre automático opcional
-        if timeout_ms and isinstance(timeout_ms, int) and timeout_ms > 0:
-            root.after(timeout_ms, lambda: root.destroy())
+            scroll = tk.Scrollbar(body, orient="vertical")
+            txt = tk.Text(body, wrap="word", height=7, yscrollcommand=scroll.set)
+            scroll.config(command=txt.yview)
+            txt.grid(row=0, column=0, sticky="nsew")
+            scroll.grid(row=0, column=1, sticky="ns")
+            txt.insert("1.0", message or "")
+            txt.config(state="disabled")
 
-        root.mainloop()
-    except Exception as e:
-        log.error(f"Error mostrando ventana de mensaje: {e}")
+            # fila 2: botón
+            btn = tk.Button(frm, text="Cerrar", command=root.destroy)
+            btn.grid(row=2, column=1, pady=(10,0), sticky="e")
+            root.bind("<Escape>", lambda e: root.destroy())
+
+            if timeout_seconds and timeout_seconds > 0:
+                root.after(int(timeout_seconds*1000), root.destroy)
+
+            root.mainloop()
+
+        threading.Thread(target=_run, daemon=True).start()
+        return True
+
+    except Exception:
+        # fallback MessageBox...
+        MB_OK = 0x00000000
+        MB_ICONINFORMATION = 0x00000040
+        MB_TOPMOST = 0x00040000
+        ctypes.windll.user32.MessageBoxW(
+            0, (message or ""), "Comunicado Institucional",
+            MB_OK | MB_ICONINFORMATION | MB_TOPMOST
+        )
+        return True
+
 
 
 def show_message_async(title: str, message: str, timeout_seconds: int | None = None):
-    """Lanza la ventana de mensaje en un hilo aparte para no bloquear."""
-    try:
-        ms = int(timeout_seconds * 1000) if timeout_seconds else None
-    except Exception:
-        ms = None
-    t = threading.Thread(target=_show_message_window, args=(title, message, ms), daemon=True)
-    t.start()
+    ok = _show_message_window(title, message, timeout_seconds)
+    if ok:  log.info("Ventana de mensaje mostrada correctamente")
+    else:   log.error("No se pudo mostrar la ventana de mensaje")
+    return ok
 
 
 def ensure_app_folder():
@@ -651,8 +973,7 @@ class WebhookHandler(BaseHTTPRequestHandler):
     server_version = "WallpaperCliente/1.1"
 
     def log_message(self, format, *args):
-        log.info("%s - - [%s] %s" % (self.address_string(),
-                 self.log_date_time_string(), format % args))
+        log.info("%s - - [%s] %s" % (self.address_string(), self.log_date_time_string(), format % args))
 
     def _json_response(self, status: int, data: dict):
         self.send_response(status)
@@ -665,6 +986,7 @@ class WebhookHandler(BaseHTTPRequestHandler):
         if content_length == 0:
             self._json_response(400, {"ok": False, "error": "Empty request"})
             return
+
         try:
             body = self.rfile.read(content_length)
             payload = json.loads(body)
@@ -673,17 +995,20 @@ class WebhookHandler(BaseHTTPRequestHandler):
             log.error(f"JSON inválido en webhook: {e}")
             self._json_response(400, {"ok": False, "error": "Invalid JSON"})
             return
+
         cfg = cargar_json(CONFIG_FILE) or {}
         secret = get_secret_from_cfg(cfg)
         if payload.get("secret_key") != secret:
             log.warning("Webhook con secret_key inválida")
-            self._json_response(
-                403, {"ok": False, "error": "Invalid secret_key"})
+            self._json_response(403, {"ok": False, "error": "Invalid secret_key"})
             return
+
         action = payload.get("action")
         result = {"ok": False, "action": action}
+
         try:
             ejecutado_directamente = False
+
             if action == "set_wallpaper":
                 style = payload.get("style", "fill")
                 image_name = payload.get("image_name")
@@ -700,37 +1025,51 @@ class WebhookHandler(BaseHTTPRequestHandler):
                         ejecutado_directamente = True
                     else:
                         result["error"] = "No se pudo descargar el wallpaper"
+
             elif action == "lock":
                 lock_wallpaper_option()
                 result["ok"] = True
                 ejecutado_directamente = True
+
             elif action == "unlock":
                 unlock_wallpaper_option()
                 result["ok"] = True
                 ejecutado_directamente = True
+
             elif action == "ping":
                 result["ok"] = True
                 ejecutado_directamente = True
+
+            elif action == "show_message":
+                # 👇 Ejecutar SIEMPRE en el acto (no encolar)
+                title = payload.get("title", "") or "Mensaje"
+                message = payload.get("message", "") or ""
+                timeout = payload.get("timeout_seconds")  # opcional
+                if not title and not message:
+                    result["error"] = "Debe indicar al menos title o message"
+                else:
+                    show_message_async(title, message, timeout)
+                    result["ok"] = True
+                    ejecutado_directamente = True
+
             else:
                 result["error"] = f"Acción desconocida: {action}"
-            if not ejecutado_directamente and result.get("error"):
+
+            # Fallback a pendientes SOLO para acciones que no sean show_message
+            if (not ejecutado_directamente) and result.get("error") and action != "show_message":
                 accion_pendiente = payload.copy()
                 if agregar_accion_pendiente(accion_pendiente):
                     result["pending"] = True
                     result["message"] = "Acción añadida a pendientes"
                     result["ok"] = True
-            elif action == "show_message":
-                        title = payload.get("title", "Mensaje del sistema")
-                        message = payload.get("message", "")
-                        timeout = payload.get("timeout_seconds")  # opcional
-                        show_message_async(title, message, timeout)
-                        result["ok"] = True
-                        ejecutado_directamente = True
+
         except Exception as e:
             log.error(f"Error procesando acción '{action}': {e}")
             result["error"] = str(e)
+
         update_data_cliente(action_performed=action)
         self._json_response(200, result)
+
 
 
 def start_webhook_server(port=DEFAULT_PORT):
@@ -956,7 +1295,7 @@ def first_run_gui():
     e_folder = ttk.Entry(frm, width=28, font=fuente_normal)
     e_folder.grid(column=1, row=3, columnspan=2, pady=5, sticky="w")
     e_folder.insert(0, "wallpaper-server")
-    ttk.Label(frm, text="Contraseña de aprovisionamiento:",
+    ttk.Label(frm, text="Contraseña:",
               font=fuente_normal).grid(column=0, row=4, sticky="w", pady=5)
     e_prov = ttk.Entry(frm, width=28, font=fuente_normal, show="•")
     e_prov.grid(column=1, row=4, pady=5, sticky="w")
@@ -1005,7 +1344,7 @@ def first_run_gui():
     e_folder.grid(column=1, row=3, columnspan=2, pady=5, sticky="w")
     e_folder.insert(0, "wallpaper-server")
 
-    ttk.Label(frm, text="Contraseña de aprovisionamiento:", font=fuente_normal)\
+    ttk.Label(frm, text="Contraseña:", font=fuente_normal)\
         .grid(column=0, row=4, sticky="w", pady=5)
     e_prov = ttk.Entry(frm, width=28, font=fuente_normal, show="•")
     e_prov.grid(column=1, row=4, pady=5, sticky="w")
@@ -1071,7 +1410,7 @@ def first_run_gui():
         except Exception as e:
             log.warning(f"HEAD falló, probando GET: {e}")
 
-        # 2) GET (fallback)
+        # 2 GET (fallback)
         try:
             req = urllib.request.Request(url, method="GET")
             try:
@@ -1242,58 +1581,75 @@ def main():
         if not cfg:
             log.error("No se pudo obtener configuración. Saliendo...")
             sys.exit(1)
+
         sec = get_secret_from_cfg(cfg)
         if not sec:
-            log.info(
-                "No hay secret_key en config; se intentará provisionar desde servidor.")
+            log.info("No hay secret_key en config; se intentará provisionar desde servidor.")
             first_run_gui()
             cfg = cargar_json(CONFIG_FILE) or {}
             sec = get_secret_from_cfg(cfg)
             if not sec:
                 log.error("No se pudo obtener una secret_key válida. Saliendo.")
                 sys.exit(1)
+            # ↓ baja el logo y guarda cfg["logo_path"] (primer registro)
+            download_logo(cfg)
+
         # Validar conexión
         cfg = validate_server_and_maybe_restore()
         if not cfg:
             log.error("Sin configuración válida. Saliendo...")
             sys.exit(1)
+
+        # ↓ Asegurar logo tras validación: si falta ruta o el archivo no existe, descargarlo
+        try:
+            ensure_valid_logo(cfg)
+        except Exception as e:
+            log.warning(f"No se pudo asegurar el logo institucional: {e}")
+
         # Crear regla firewall (ignorar error si no hay permisos)
         try:
             crear_regla_firewall(DEFAULT_PORT)
         except Exception as e:
             log.warning(f"No se pudo crear regla firewall: {e}")
+
         # Datos del cliente
         data = load_or_create_data_cliente()
+
         # Mostrar estado de pendientes al iniciar
         pendientes = data.get("pending", [])
         if pendientes:
             log.info(f"📋 {len(pendientes)} acciones pendientes al iniciar")
             for accion in pendientes[:3]:
-                log.info(
-                    f"   - {accion.get('action')} ({accion.get('timestamp', 'sin timestamp')})")
+                log.info(f"   - {accion.get('action')} ({accion.get('timestamp', 'sin timestamp')})")
             if len(pendientes) > 3:
                 log.info(f"   - ... y {len(pendientes) - 3} más")
+
         # Sincronizar configuración remota (si hay conexión)
         try:
             sync_config_with_server()
         except Exception as e:
             log.warning(f"No se pudo sincronizar configuración: {e}")
+
         # Iniciar webhook
         try:
             webhook_server = start_webhook_server(DEFAULT_PORT)
         except Exception:
             log.error("Fallo crítico al iniciar webhook. Abortando.")
             sys.exit(1)
+
         # Estado inicial
         update_data_cliente(action_performed="startup")
+
         # Hilo background
         threading.Thread(target=main_loop_background, daemon=True).start()
-        log.info("✅ Cliente iniciado correctamente")
-        log.info(f"🌐 Webhook escuchando en puerto: {DEFAULT_PORT}")
-        log.info(f"⚙️  Configuración: {cfg}")
-        log.info("💾 Sistema de acciones pendientes: ACTIVADO")
+        log.info(" Cliente iniciado correctamente")
+        log.info(f" Webhook escuchando en puerto: {DEFAULT_PORT}")
+        log.info(f"  Configuración: {cfg}")
+        log.info(" Sistema de acciones pendientes: ACTIVADO")
+
         while True:
             time.sleep(1)
+
     except KeyboardInterrupt:
         log.info("Interrupción por teclado. Cerrando...")
         try:
