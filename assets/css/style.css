@@ -1,208 +1,341 @@
 /* ===== Base & Layout ===== */
-html, body { height: 100%; }
-body { display: flex; flex-direction: column; margin: 0; }
-main { flex: 1; }
+:root {
+  --primary: #05a052;
+  --primary-dark: #17a155;
+  --secondary: #6c757d;
+  --success: #4cc9f0;
+  --danger: #f72585;
+  --warning: #ffd166;
+  --info: #4895ef;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --border-radius: 12px;
+  --box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --transition: all 0.3s ease;
+}
 
-/* Contenedores y tablas */
-.table-responsive { overflow-x: auto; }
-.table-hover tbody tr:hover { background-color: rgba(0, 0, 0, 0.05); }
+html, body { 
+  height: 100%; 
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+body { 
+  display: flex; 
+  flex-direction: column; 
+  margin: 0; 
+  background-color: #f5f7fb;
+}
+main { 
+  flex: 1; 
+  padding-top: 20px !important;
+}
 
-/* ===== Utilidades ===== */
-.cursor-pointer { cursor: pointer; }
-.hidden { display: none !important; }
+/* ===== Cards modernas ===== */
+.card {
+  border: none;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  background: white;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+.card-header {
+  background: linear-gradient(135deg, var(--primary) 0%, #0ca339 100%);
+  color: white;
+  border-bottom: none;
+  border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+  padding: 1.25rem 1.5rem;
+}
+.card-footer {
+  background: var(--light);
+  border-top: none;
+  border-radius: 0 0 var(--border-radius) var(--border-radius) !important;
+  margin-top: auto; /* Empuja el footer al final */
+}
 
-/* Badges de estado */
+/* Panel fijo dentro de la card */
+.fixed-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.panel-content {
+  flex: 1;
+  overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+  padding-right: 0.5rem; /* Evita que el scroll tape contenido */
+}
+
+/* ===== Tabla moderna ===== */
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 0;
+}
+.table thead th {
+  background: var(--light);
+  font-weight: 600;
+  color: var(--dark);
+  padding: 1rem 0.75rem;
+  border-bottom: 2px solid #e9ecef;
+}
+.table tbody td {
+  padding: 1rem 0.75rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f3f5;
+}
+.table-hover tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Badge de estado personalizado */
 .status-badge {
   display: inline-block;
-  padding: 0.35em 0.65em;
-  font-size: 0.75em;
-  font-weight: 700;
+  padding: 0.4em 0.8em;
+  font-size: 0.85em;
+  font-weight: 600;
   line-height: 1;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
-  border-radius: 0.25rem;
+  border-radius: 20px;
 }
-.status-badge-bloqueado { background-color: #dc3545; color: #fff; }
-.status-badge-desbloqueado { background-color: #28a745; color: #fff; }
+.status-badge-bloqueado {
+  background: linear-gradient(135deg, #ff6b6b, #ff2e63);
+  color: white;
+}
+.status-badge-desbloqueado {
+  background: linear-gradient(135deg, var(--success), #22c55e);
+  color: white;
+}
 
-/* Sortable headers */
-.sortable { cursor: pointer; }
-.sortable:hover { background-color: rgba(0, 0, 0, 0.03); }
+/* ===== Botones modernos ===== */
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: var(--transition);
+  border: none; /* Botones sin borde por defecto para un look más limpio */
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%,  #0ca339 100%);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--primary-dark) 0%,  #0ca339 100%);
+}
+.btn-outline-primary {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  background-color: transparent;
+}
+.btn-outline-primary:hover {
+  background: rgba(67, 97, 238, 0.1);
+}
 
-/* ===== Alertas flotantes ===== */
+/* ===== Formularios ===== */
+.form-control, .form-select {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  transition: var(--transition);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+/* ===== File drop area ===== */
+.file-drop-area {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: var(--transition);
+  background: #f8fafc;
+  cursor: pointer;
+}
+.file-drop-area:hover, .file-drop-area.active {
+  border-color: var(--primary);
+  background: rgba(67, 97, 238, 0.05);
+}
+.file-drop-area .file-info {
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+}
+
+/* ===== Badges ===== */
+.badge {
+  font-weight: 600;
+  padding: 0.5em 0.8em;
+  border-radius: 20px;
+}
+/* Colores degradados para badges */
+.badge-warning {
+  background: linear-gradient(135deg, #ffd166, #ffc300);
+  color: #1a1a1a;
+}
+.badge-success {
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  color: white;
+}
+.badge-danger {
+  background: linear-gradient(135deg, #ff6b6b, #ff2e63);
+  color: white;
+}
+
+/* ===== Alertas ===== */
+.alert {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+}
 .alert-floating {
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 1030;
-  min-width: 300px;
-  box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  min-width: 320px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-/* ===== Overlay de carga ===== */
+/* ===== Loading overlay ===== */
 .loading-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 1040;
 }
-.spinner-border { width: 3rem; height: 3rem; }
-.spinner-border-sm { width: 1rem; height: 1rem; }
 
-/* ===== Modal de progreso ===== */
-.progress-modal .modal-content { border: none; border-radius: 10px; }
-.progress-modal .modal-header { border-bottom: 1px solid #dee2e6; background: #f8f9fa; }
-.progress-modal .modal-body { padding: 20px; }
+/* ===== Progress Modal ===== */
+.progress-modal .modal-content {
+  border: none;
+  border-radius: 10px;
+}
+.progress-modal .modal-header {
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+}
 
-/* ===== Área de archivo / preview ===== */
-.file-drop-area {
-  border: 2px dashed #dee2e6;
+/* ===== Vista previa de imagen ===== */
+.img-preview {
+  max-width: 100%;
+  max-height: 300px; /* Limita la altura para mantener el diseño */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
   border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.3s;
-  background: #f8f9fa;
-  cursor: pointer;
-}
-.file-drop-area.active {
-  border-color: #0d6efd;
-  background-color: rgba(13,110,253,0.05);
-}
-.file-info {
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: #f8f9fa;
-  border-radius: 4px;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* ===== Tarjetas y columnas del panel ===== */
-#opcionesCol > .card { min-height: 320px; }        /* Columna de acción */
-.img-preview { max-width: 100%; max-height: 320px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-#archivoDiv, #mensajeDiv, #estiloDiv { min-height: 120px; }   /* Evita saltos al alternar acción */
-
-/* Sidebar de preview (si lo usas en otra vista) */
-.preview-sidebar {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 15px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.preview-sidebar .img-preview { max-height: 150px; margin-bottom: 10px; }
-
-/* ===== Buscador ===== */
-.search-container { position: relative; }
-.search-container .form-control { padding-right: 40px; }
-.search-container .clear-search {
-  position: absolute;
-  right: 10px; top: 50%;
-  transform: translateY(-50%);
-  background: none; border: none;
-  color: #6c757d; cursor: pointer; display: none;
-}
-.search-container .form-control:not(:placeholder-shown) + .clear-search { display: block; }
-
-/* ===== Ajustes de tarjetas ===== */
-.card.h-100 { display: flex; flex-direction: column; }
-.card .card-body { flex: 1 1 auto; }
-
-/* ===== Responsivo ===== */
-@media (max-width: 1199.98px) {
-  #opcionesCol > .card { min-height: 300px; }
-}
+/* ===== Responsive Improvements ===== */
 @media (max-width: 991.98px) {
-  #opcionesCol > .card { min-height: auto; }
-  .img-preview { max-height: 260px; }
-}
-@media (max-width: 575.98px) {
-  .img-preview { max-height: 220px; }
-}
-/* Altura estable para paneles que cambian */
-:root {
-  --panel-h-lg: 420px; /* altura en escritorio */
-  --panel-h-sm: 360px; /* altura en móvil/tablet */
-}
-
-/* Card izquierda (opciones) con altura razonable */
-#opcionesCol .card { min-height: 420px; }
-
-/* Parám. y Vista con altura fija y contenido desplazable */
-#paramCol .fixed-panel,
-#previewCol .fixed-panel {
-  display: flex;
-  flex-direction: column;
-}
-
-#paramCol .fixed-panel,
-#previewCol .fixed-panel {
-  min-height: var(--panel-h-sm);
-  max-height: var(--panel-h-sm);
-}
-
-@media (min-width: 992px) {
-  #paramCol .fixed-panel,
-  #previewCol .fixed-panel {
-    min-height: var(--panel-h-lg);
-    max-height: var(--panel-h-lg);
+  .card {
+    margin-bottom: 1.5rem;
+  }
+  .btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
   }
 }
 
-/* El contenido ocupa todo el alto y hace scroll si se excede */
-.panel-content {
-  flex: 1 1 auto;
-  min-height: 0;            /* importante para que el flex permita overflow */
-  overflow: auto;
-  padding-right: .25rem;    /* evita que el scroll tape contenido */
+/* Diseño adaptativo para móviles: Tabla en modo tarjeta */
+@media (max-width: 767.98px) {
+  /* Hace que la tabla sea vertical en móviles */
+  .table-responsive {
+    overflow-x: hidden;
+  }
+
+  #clientesTable thead {
+    display: none; /* Oculta el encabezado en móvil */
+  }
+
+  #clientesTable,
+  #clientesTable tbody,
+  #clientesTable tr,
+  #clientesTable td {
+    display: block;
+    width: 100%;
+  }
+
+  #clientesTable tr {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    box-shadow: var(--box-shadow);
+  }
+
+  #clientesTable td {
+    text-align: right;
+    padding: 0.5rem 0 0.5rem 50%; /* Espacio para la etiqueta */
+    position: relative;
+    border: none;
+  }
+
+  /* Genera una etiqueta para cada celda usando el atributo data-label */
+  #clientesTable td::before {
+    content: attr(data-label) ": ";
+    position: absolute;
+    left: 0;
+    width: 45%;
+    padding-left: 15px;
+    font-weight: 600;
+    text-align: left;
+    color: var(--secondary);
+  }
+
+  /* Ajusta los botones de acción en móvil */
+  .text-nowrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .btn-sm {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
 }
 
-/* Los bloques dinámicos llenan el alto disponible */
-#paramWallpaper,
-#mensajeDiv,
-#previewWallpaper,
-#previewMessage {
-  height: 100%;
+/* ===== Utility Classes (No tocan funcionalidad) ===== */
+.hidden {
+  display: none !important;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.sortable {
+  cursor: pointer;
+}
+.sortable:hover {
+  background-color: rgba(0, 0, 0, 0.03);
 }
 
-/* Área de drop consistente en altura y centrado */
-#fileDropArea.file-drop-area,
-#fileDropArea.drop-area {
-  min-height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+/* Asegura que las imágenes pequeñas no se deformen */
+img {
+  max-width: 100%;
+  height: auto;
 }
-
-/* Info del archivo con altura mínima para que no "salte" al cambiar el texto */
-#fileInfo.file-info {
-  min-height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: .75rem;
-  word-break: break-word;
-}
-
-/* Imagen siempre contenida sin cambiar el tamaño del panel */
-#imgPreview.img-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: none; /* la muestras con JS cuando haya archivo */
-}
-
-/* Mantén estable el bloque de estilo para que no empuje */
-#estiloDiv { min-height: 84px; }
-
-/* Utilidad para ocultar (ya la usas) */
-.hidden { display: none !important; }

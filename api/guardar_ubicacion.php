@@ -10,7 +10,7 @@ if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_tok
   json_out(['success'=>false,'message'=>'Token CSRF inválido'], 403);
 }
 
-foreach (['id','edificio','piso','servicio','oficina'] as $f) {
+foreach (['id','edificio','piso','servicio','oficina','responsable'] as $f) {
   if (empty($_POST[$f])) json_out(['success'=>false,'message'=>"El campo {$f} es requerido"], 400);
 }
 
@@ -20,6 +20,7 @@ $data = [
   'piso'     => (string)$_POST['piso'],
   'servicio' => (string)$_POST['servicio'],
   'oficina'  => (string)$_POST['oficina'],
+  'responsable'  => (string)$_POST['responsable'],
 ];
 
 $ubicacionesDir = DATA_DIR . '/ubicaciones';

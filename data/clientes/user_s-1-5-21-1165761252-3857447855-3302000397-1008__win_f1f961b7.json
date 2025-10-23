@@ -1,0 +1,129 @@
+{
+    "id": "user_s-1-5-21-1165761252-3857447855-3302000397-1008__win_f1f961b7",
+    "username": "HBV",
+    "serie": "8CN5040B1J",
+    "ip": "10.6.160.92",
+    "mac": "48-EA-62-CD-45-C5",
+    "locked": false,
+    "last_seen": "2025-10-15 12:43:28 PM -03",
+    "red": {
+        "ip": "10.6.160.92",
+        "mascara": "255.255.255.0",
+        "gateway": "10.6.160.1",
+        "dns": [
+            "10.8.134.45",
+            "10.8.134.35"
+        ],
+        "proxy": {
+            "activo": true,
+            "servidor": "10.6.206.80:8080",
+            "exclusiones": "10.6.*;10.8.*;10.7.*;10.63.*;*.econecta.cl;10.6.*;10.8.*;10.7.*;10.63.*;*.econecta.cl;10.6.*;10.8.*;10.7.*;10.63.*;*.econecta.cl;10.6.*;10.8.*;10.7.*;10.63.*;*.econecta.cl;10.6.*;10.8.*;10.7.*;10.63.*;*.econecta.cl;10.6.*;10.8.*;10.7.*;10.63.*;*.econecta.cl"
+        }
+    },
+    "pending": [],
+    "so": "Microsoft Windows 11 Pro",
+    "impresoras": {
+        "impresoras": [
+            {
+                "nombre": "Wondershare PDFelement",
+                "descripcion": "Wondershare PDFelement,Wondershare PDFelement,",
+                "predeterminada": false,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "Wondershare PDFelement Port",
+                "trabajos_pendientes": 0
+            },
+            {
+                "nombre": "OneNote (Desktop)",
+                "descripcion": "OneNote (Desktop),Send to Microsoft OneNote 16 Driver,",
+                "predeterminada": false,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "nul:",
+                "trabajos_pendientes": 0
+            },
+            {
+                "nombre": "Microsoft Print to PDF",
+                "descripcion": "Microsoft Print to PDF,Microsoft Print To PDF,",
+                "predeterminada": false,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "PORTPROMPT:",
+                "trabajos_pendientes": 0
+            },
+            {
+                "nombre": "impresora proxy",
+                "descripcion": "impresora proxy,Generic IBM Graphics 9pin,",
+                "predeterminada": true,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "RPT1:",
+                "trabajos_pendientes": 0
+            },
+            {
+                "nombre": "HP SOPORTE TICS",
+                "descripcion": "HP SOPORTE TICS,HP Universal Printing PCL 6,",
+                "predeterminada": false,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "IP_10.6.214.47",
+                "trabajos_pendientes": 0
+            },
+            {
+                "nombre": "hp manager",
+                "descripcion": "hp manager,Samsung Universal Print Driver 3,",
+                "predeterminada": false,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "10.6.214.47_1",
+                "trabajos_pendientes": 0
+            },
+            {
+                "nombre": "CODBAR",
+                "descripcion": "CODBAR,ZDesigner LP 2824 Plus (ZPL),",
+                "predeterminada": false,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "USB002",
+                "trabajos_pendientes": 0
+            },
+            {
+                "nombre": "\\\\10.6.64.103\\ZDesigner 10x10",
+                "descripcion": "\\\\10.6.64.103\\ZDesigner 10x10,ZDesigner GX420t,",
+                "predeterminada": false,
+                "estado": "lista",
+                "tiene_error": false,
+                "puerto": "USB002",
+                "trabajos_pendientes": 0
+            }
+        ],
+        "predeterminada": "impresora proxy",
+        "total_impresoras": 8
+    },
+    "hardware": {
+        "cpu": "Intel(R) Core(TM) i5-14500",
+        "ram": {
+            "total": "15.68 GB",
+            "usada": "14.48 GB",
+            "porcentaje_uso": "92.4%"
+        },
+        "discos": [
+            {
+                "dispositivo": "C:\\",
+                "sistema_archivos": "NTFS",
+                "capacidad_total_gb": 953.1,
+                "usado_gb": 178.2,
+                "libre_gb": 774.9,
+                "porcentaje_uso": "18.7%"
+            },
+            {
+                "dispositivo": "D:\\",
+                "sistema_archivos": "NTFS",
+                "capacidad_total_gb": 28.8,
+                "usado_gb": 8.5,
+                "libre_gb": 20.3,
+                "porcentaje_uso": "29.5%"
+            }
+        ]
+    }
+}

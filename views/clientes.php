@@ -6,7 +6,7 @@
 // Desempaquetamos $mensajes de forma segura (sin extract)
 $error           = $mensajes['error']           ?? '';
 $success         = $mensajes['success']         ?? '';
-$resultado_envio = $mensajes['resultado_envio'] ?? null;
+$resultado_envio = $mensajes['resultado_envio'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -25,7 +25,7 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-  <!-- Estilos propios (usa .file-drop-area, .loading-overlay, .fixed-panel, .panel-content, etc.) -->
+  <!-- Estilos propios -->
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -48,14 +48,12 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
          ALERTAS SUPERIORES
          ========================== -->
     <?php if (!empty($errorCarga)): ?>
-      <!-- Error al cargar datos iniciales -->
       <div class="alert alert-danger">
         <i class="bi bi-exclamation-triangle-fill"></i> <?= htmlspecialchars($errorCarga) ?>
       </div>
     <?php endif; ?>
 
     <?php if (!empty($error)): ?>
-      <!-- Error de operación (validaciones, backend, etc.) -->
       <div class="alert alert-danger alert-floating">
         <i class="bi bi-exclamation-triangle-fill"></i> <?= htmlspecialchars($error) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -63,7 +61,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
     <?php endif; ?>
 
     <?php if (!empty($success)): ?>
-      <!-- Mensaje de éxito -->
       <div class="alert alert-success alert-floating">
         <i class="bi bi-check-circle-fill"></i> <?= htmlspecialchars($success) ?>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -71,7 +68,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
     <?php endif; ?>
 
     <?php if (!empty($resultado_envio)): ?>
-      <!-- Resumen del envío de acción (id de tarea, timestamp, etc.) -->
       <div class="alert alert-success alert-floating">
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         <h5><i class="bi bi-check-circle-fill"></i> ¡Acción enviada correctamente!</h5>
@@ -103,26 +99,21 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
          FORMULARIO PRINCIPAL
          ========================== -->
     <form method="POST" enctype="multipart/form-data" action="api/enviar.php" class="needs-validation" novalidate id="mainForm">
-      <!-- CSRF -->
       <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
 
       <!-- =============================================
            FILA DE 3 COLUMNAS: ACCIÓN | PARÁMETROS | VISTA
            ============================================= -->
       <div class="row gx-1 gy-3 align-items-stretch">
-
-        <!-- ===== Columna 1: ACCIÓN + opciones ===== -->
+        <!-- Columna 1: ACCIÓN -->
         <div class="col-12 col-lg-4" id="opcionesCol">
           <div class="card h-100">
             <div class="card-header bg-light">
               <i class="bi bi-send"></i>
               <strong>Acción</strong>
             </div>
-
-            <!-- Cuerpo: selector de acción y (si aplica) estilo de wallpaper -->
             <div class="card-body fixed-panel">
               <div class="panel-content">
-                <!-- Selector de acción: set_wallpaper / lock / unlock / show_message -->
                 <div class="mb-3">
                   <label for="accion" class="form-label fw-bold">Selecciona una acción</label>
                   <select class="form-select" name="accion" id="accion" required onchange="mostrarOpciones()">
@@ -134,8 +125,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
                   </select>
                   <div class="invalid-feedback">Por favor seleccione una acción</div>
                 </div>
-
-                <!-- Estilo de wallpaper (solo visible si accion === set_wallpaper) -->
                 <div id="estiloDiv" class="mb-3 hidden">
                   <label for="estilo" class="form-label fw-bold">Estilo</label>
                   <select class="form-select" name="estilo" id="estilo">
@@ -148,8 +137,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
                 </div>
               </div>
             </div>
-
-            <!-- Pie: botón de envío (capturado por app.js) -->
             <div class="card-footer bg-light d-grid">
               <button type="submit" id="submitBtn" class="btn btn-primary">
                 <i class="bi bi-send"></i> Enviar a seleccionados
@@ -158,22 +145,17 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
           </div>
         </div>
 
-        <!-- ===== Columna 2: PARÁMETROS (elige imagen o escribe mensaje) ===== -->
+        <!-- Columna 2: PARÁMETROS -->
         <div class="col-12 col-lg-4" id="paramCol">
           <div class="card h-100">
             <div class="card-header bg-light">
               <strong>Parámetros</strong>
             </div>
-
-            <!-- Cuerpo fijo: dentro va el selector de imagen o el formulario de mensaje -->
             <div class="card-body fixed-panel">
               <div class="panel-content">
-                <!-- Parámetros para set_wallpaper (drag & drop / click) -->
                 <div id="paramWallpaper">
                   <div id="fileDropArea" class="file-drop-area">
-                    <!-- Input real (oculto); se usa para enviar el archivo y para validar -->
                     <input type="file" id="fondo" name="fondo" accept="image/*" class="visually-hidden" />
-                    <!-- Etiqueta clickable / zona de drop -->
                     <label for="fondo" class="w-100 m-0">
                       <div id="fileInfo" class="file-info">
                         <i class="bi bi-cloud-upload"></i>&nbsp; Arrastra una imagen o haz clic aquí
@@ -184,8 +166,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
                     Formatos soportados: JPG, PNG, GIF, BMP, WEBP. Máx. 10MB.
                   </small>
                 </div>
-
-                <!-- Parámetros para show_message (se muestra si accion === show_message) -->
                 <div id="mensajeDiv" class="hidden">
                   <div class="mb-2">
                     <label for="msgTitle" class="form-label">Título (opcional)</label>
@@ -193,7 +173,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
                   </div>
                   <div class="mb-2">
                     <label for="msgBody" class="form-label">Mensaje</label>
-                    <!-- Achicado (rows=4); control fino via CSS si lo prefieres -->
                     <textarea id="msgBody" class="form-control" rows="4" maxlength="4000" placeholder="Escribe el mensaje..."></textarea>
                     <small class="text-muted"><span id="msgCount">0</span>/4000</small>
                   </div>
@@ -207,36 +186,24 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
           </div>
         </div>
 
-        <!-- ===== Columna 3: VISTA (solo previsualización) ===== -->
+        <!-- Columna 3: VISTA -->
         <div class="col-12 col-lg-4" id="previewCol">
           <div class="card h-100">
-            <!-- Cuerpo fijo: contendrá la vista previa de la imagen (y/o mensaje si lo activas) -->
             <div class="card-body fixed-panel">
               <div class="panel-content">
-                <!-- Vista previa de la imagen (visible si accion === set_wallpaper y hay archivo válido) -->
                 <div id="previewWallpaper" class="hidden">
                   <img id="imgPreview" class="img-preview" alt="Vista previa" style="display:none;" />
                 </div>
-
-                <!-- Si quisieras una vista previa de mensaje, puedes reactivar este bloque:
-                <div id="previewMessage" class="hidden">
-                  <h5 id="pvMsgTitle" class="mb-2"></h5>
-                  <div id="pvMsgBody" class="border rounded p-3 bg-light" style="min-height: 140px;"></div>
-                  <small class="text-muted d-block mt-2" id="pvMsgExtra"></small>
-                </div>
-                -->
               </div>
             </div>
           </div>
         </div>
-
-      </div> <!-- /row columnas -->
+      </div>
 
       <!-- =============================================
-           TOOLBAR: búsqueda, filtros y selección masiva
+           TOOLBAR: búsqueda, filtros y selección
            ============================================= -->
       <div class="row g-2 align-items-center mt-4 mb-3">
-        <!-- Buscador -->
         <div class="col-12 col-md-4">
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
@@ -246,8 +213,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
             </button>
           </div>
         </div>
-
-        <!-- Filtro rápido (estado/ubicación) -->
         <div class="col-12 col-md-3">
           <select id="filtroRapido" class="form-select">
             <option value="">Todos</option>
@@ -257,8 +222,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
             <option value="desbloqueados">Desbloqueados</option>
           </select>
         </div>
-
-        <!-- Selección masiva (visibles / deseleccionar) -->
         <div class="col-12 col-md-3 d-flex gap-2">
           <button class="btn btn-outline-primary" type="button" id="btnSeleccionarPagina" title="Seleccionar visibles">
             <i class="bi bi-check-square"></i> Seleccionar visibles
@@ -267,8 +230,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
             <i class="bi bi-square"></i> Deseleccionar
           </button>
         </div>
-
-        <!-- Contador (lo actualiza app.js) -->
         <div class="col-12 col-md-2 text-md-end">
           <small id="contadorClientes" class="text-muted d-inline-block mt-2 mt-md-0"></small>
         </div>
@@ -281,92 +242,130 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
         <table class="table table-hover table-bordered" id="clientesTable">
           <thead class="table-light">
             <tr>
-              <!-- Selección global -->
               <th width="40">
                 <input type="checkbox" id="checkTodos" class="form-check-input cursor-pointer" title="Seleccionar todos">
               </th>
-              <!-- Cabeceras ordenables (app.js puede enganchar data-sort) -->
               <th class="sortable" data-sort="id">ID <i class="bi bi-arrow-down-up"></i></th>
               <th class="sortable" data-sort="nombre">Nombre <i class="bi bi-arrow-down-up"></i></th>
               <th class="sortable" data-sort="serie">Número de Serie <i class="bi bi-arrow-down-up"></i></th>
               <th class="sortable" data-sort="ip">IP <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="mac">MAC <i class="bi bi-arrow-down-up"></i></th>
+              <th class="sortable" data-sort="servicio">Servicio <i class="bi bi-arrow-down-up"></i></th>
+              <th class="sortable" data-sort="responsable">Responsable <i class="bi bi-arrow-down-up"></i></th>
+
               <th class="sortable" data-sort="conexion">Último Registro <i class="bi bi-arrow-down-up"></i></th>
+              <th class="sortable text-center" data-sort="os">SO <i class="bi bi-arrow-down-up"></i></th>
+
+
               <th class="sortable" data-sort="pendientes">Pendientes <i class="bi bi-arrow-down-up"></i></th>
               <th class="sortable" data-sort="estado">Estado <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="edificio">Edificio <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="servicio">Servicio <i class="bi bi-arrow-down-up"></i></th>
-              <th class="sortable" data-sort="oficina">Oficina <i class="bi bi-arrow-down-up"></i></th>
+
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <?php if (empty($clientes)): ?>
-              <!-- Sin datos -->
               <tr>
                 <td colspan="13" class="text-center text-muted py-4">
                   <i class="bi bi-exclamation-circle"></i> No hay clientes registrados
                 </td>
               </tr>
             <?php else: ?>
-              <!-- Filas de clientes -->
               <?php foreach ($clientes as $id => $cliente): ?>
                 <?php
                   $pendientes = (isset($cliente['pending']) && is_array($cliente['pending'])) ? count($cliente['pending']) : 0;
                   $isBloq     = ($cliente['bloqueado'] ?? '') === 'bloqueado';
+                  // Preparar datos para exclusiones de proxy (Opción 2)
+                  $full_exclusions = htmlspecialchars($cliente['proxy_exclusiones'] ?? 'N/A');
+                  $safe_title = htmlspecialchars($full_exclusions, ENT_QUOTES, 'UTF-8');
+                  // Truncar para mostrar en la tabla
+                  $display_exclusions = (strlen($full_exclusions) > 50) ? substr($full_exclusions, 0, 47) . '...' : $full_exclusions;
                 ?>
                 <tr>
-                  <!-- Checkbox por cliente -->
-                  <td>
+                  <td data-label="Seleccionar">
                     <input type="checkbox"
                            name="clientes[]"
                            value="<?= htmlspecialchars($id) ?>"
                            class="form-check-input cliente-checkbox">
                   </td>
+                  <td data-label="ID"><?= htmlspecialchars($id) ?></td>
+                  <td data-label="Nombre"><?= htmlspecialchars($cliente['nombre'] ?? '') ?></td>
+                  <td data-label="Serie"><?= htmlspecialchars($cliente['numero_serie'] ?? '') ?></td>
+                  <td data-label="IP"><?= htmlspecialchars($cliente['ip'] ?? '') ?></td>
 
-                  <!-- Datos principales -->
-                  <td><?= htmlspecialchars($id) ?></td>
-                  <td><?= htmlspecialchars($cliente['nombre'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($cliente['numero_serie'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($cliente['ip'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($cliente['mac'] ?? '') ?></td>
-                  <td><?= htmlspecialchars($cliente['ultima_conexion'] ?? '') ?></td>
 
-                  <!-- Pendientes -->
-                  <td>
+                  <td data-label="Servicio"><?= htmlspecialchars($cliente['servicio'] ?? '-') ?></td>
+                  <td data-label="Responsable"><?= htmlspecialchars($cliente['responsable'] ?? '-') ?></td>
+
+
+                  <?php $ts = (string)($cliente['ultima_conexion'] ?? ($cliente['last_seen'] ?? '')); ?>
+                  <td data-label="Último Registro"><time class="ts" datetime="<?= htmlspecialchars($ts) ?>"><?= htmlspecialchars($ts) ?></time></td>
+                  <td data-label="SO" class="text-center"><?= htmlspecialchars($cliente['so'] ?? '') ?></td>
+                  <td data-label="Pendientes">
                     <?= $pendientes > 0
                       ? "<span class='badge bg-warning'>$pendientes pendientes</span>"
                       : "<span class='badge bg-success'>0</span>" ?>
                   </td>
+                  <td data-label="Estado" data-estado="<?= $isBloq ? 'bloqueado' : 'desbloqueado' ?>">
+  <span class="status-badge status-badge-<?= $isBloq ? 'bloqueado' : 'desbloqueado' ?>" title="<?= $isBloq ? 'Bloqueado' : 'Desbloqueado' ?>">
+    <i class="bi bi-<?= $isBloq ? 'lock' : 'unlock' ?>-fill"></i>
+  </span>
+</td>
 
-                  <!-- Estado (bloqueado/desbloqueado) -->
-                  <td>
-                    <span class="status-badge status-badge-<?= $isBloq ? 'bloqueado' : 'desbloqueado' ?>">
-                      <?= $isBloq ? '<i class="bi bi-lock-fill"></i> Bloqueado' : '<i class="bi bi-unlock-fill"></i> Desbloqueado' ?>
-                    </span>
-                  </td>
 
-                  <!-- Ubicación -->
-                  <td><?= htmlspecialchars($cliente['edificio'] ?? '-') ?></td>
-                  <td><?= htmlspecialchars($cliente['servicio'] ?? '-') ?></td>
-                  <td><?= htmlspecialchars($cliente['oficina'] ?? '-') ?></td>
-
-                  <!-- Acciones por fila (abrir modal de ubicación / eliminar) -->
-                  <td class="text-nowrap">
+                  <td data-label="Acciones" class="text-nowrap">
                     <button type="button"
+                     title="Detalles Ubicación"
                             class="btn btn-primary btn-sm btnAgregarUbicacion"
                             data-bs-toggle="modal"
                             data-bs-target="#modalAgregarUbicacion"
                             data-id="<?= htmlspecialchars($id) ?>"
                             data-edificio="<?= htmlspecialchars($cliente['edificio'] ?? '') ?>"
                             data-servicio="<?= htmlspecialchars($cliente['servicio'] ?? '') ?>"
-                            data-oficina="<?= htmlspecialchars($cliente['oficina'] ?? '') ?>">
-                      <i class="bi bi-geo-alt"></i> Ubicación
+                            data-oficina="<?= htmlspecialchars($cliente['oficina'] ?? '') ?>"
+                            data-responsable="<?= htmlspecialchars($cliente['responsable'] ?? '') ?>">
+                      <i class="bi bi-geo-alt"></i> 
+                    </button>
+                    <!-- 👇 BOTÓN DETALLES DE RED CON EXCLUSIONES TRUNCADAS -->
+                    <button type="button"
+                    title="Detalles red"
+                            class="btn btn-info btn-sm btnVerDetalles ms-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalDetallesRed"
+                            data-id="<?= htmlspecialchars($id) ?>"
+                            data-ip="<?= htmlspecialchars($cliente['ip'] ?? 'N/A') ?>"
+                            data-mac="<?= htmlspecialchars($cliente['mac'] ?? 'N/A') ?>"
+                            data-mascara="<?= htmlspecialchars($cliente['mascara'] ?? 'N/A') ?>"
+                            data-gateway="<?= htmlspecialchars($cliente['gateway'] ?? 'N/A') ?>"
+                            data-dns="<?= htmlspecialchars($cliente['dns'] ?? 'N/A') ?>"
+                            data-proxy-activo="<?= htmlspecialchars($cliente['proxy_activo'] ?? 'No') ?>"
+                            data-proxy-servidor="<?= htmlspecialchars($cliente['proxy_servidor'] ?? 'N/A') ?>"
+                            data-proxy-exclusiones="<?= $safe_title // Valor completo para el tooltip/modal ?>">
+                      <i class="bi bi-info-circle"></i> 
                     </button>
                     <button type="button"
+                     title="Detalles Impresoras"
+                            class="btn btn-secondary btn-sm btnVerImpresoras ms-1"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalImpresoras"
+                            data-id="<?= htmlspecialchars($id) ?>"
+                            data-impresoras='<?= htmlspecialchars(json_encode($cliente['impresoras'] ?? null)) ?>'>
+                      <i class="bi bi-printer"></i> 
+                    </button>
+<button type="button"
+        title="Detalles de Hardware"
+        class="btn btn-success btn-sm btnVerHardware ms-1"
+        data-bs-toggle="modal"
+        data-bs-target="#modalHardware"
+        data-id="<?= htmlspecialchars($id) ?>"
+        data-hardware='<?= htmlspecialchars(json_encode($cliente['hardware'] ?? [])) ?>'>
+  <i class="bi bi-cpu"></i> 
+</button>
+
+                    <button type="button"
+                     title="Eliminar"
                             class="btn btn-danger btn-sm btnEliminarCliente ms-1"
                             data-id="<?= htmlspecialchars($id) ?>">
-                      <i class="bi bi-trash"></i> Eliminar
+                      <i class="bi bi-trash"></i>
                     </button>
                   </td>
                 </tr>
@@ -376,15 +375,12 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
         </table>
       </div>
 
-      <!-- Paginación (se genera desde app.js) -->
       <nav aria-label="Paginación de clientes" id="paginationNav">
         <ul class="pagination justify-content-center mt-3"></ul>
       </nav>
     </form>
 
-    <!-- =============================================
-         MODAL: Agregar / Editar ubicación
-         ============================================= -->
+    <!-- Modal: Agregar/Editar ubicación -->
     <div class="modal fade" id="modalAgregarUbicacion" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -394,11 +390,8 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
-              <!-- CSRF + ID del cliente -->
               <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
               <input type="hidden" name="id" id="ubicacionClienteId">
-
-              <!-- Selects dependientes (edificio → piso → servicio) -->
               <div class="mb-3">
                 <label for="edificio" class="form-label">Edificio</label>
                 <select class="form-select" id="edificio" name="edificio" required>
@@ -406,7 +399,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
                 </select>
                 <div class="invalid-feedback">Seleccione un edificio</div>
               </div>
-
               <div class="mb-3">
                 <label for="piso" class="form-label">Piso</label>
                 <select class="form-select" id="piso" name="piso" disabled required>
@@ -414,7 +406,6 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
                 </select>
                 <div class="invalid-feedback">Seleccione un piso</div>
               </div>
-
               <div class="mb-3">
                 <label for="servicio" class="form-label">Servicio</label>
                 <select class="form-select" id="servicio" name="servicio" disabled required>
@@ -422,11 +413,15 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
                 </select>
                 <div class="invalid-feedback">Seleccione un servicio</div>
               </div>
-
               <div class="mb-3">
                 <label for="oficina" class="form-label">Oficina</label>
                 <input type="text" class="form-control" name="oficina" id="oficina" required>
                 <div class="invalid-feedback">Ingrese la oficina</div>
+              </div>
+              <div class="mb-3">
+                <label for="responsable" class="form-label">Responsable</label>
+                <input type="text" class="form-control" name="responsable" id="responsable" required>
+                <div class="invalid-feedback">Ingrese Responsable</div>
               </div>
             </div>
             <div class="modal-footer">
@@ -441,9 +436,87 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
       </div>
     </div>
 
-    <!-- =============================================
-         MODAL: Progreso de procesamiento
-         ============================================= -->
+
+<!-- Modal: Hardware -->
+<div class="modal fade" id="modalHardware" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Hardware de: <span id="modalHardwareId"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div id="hardwareContent">
+          <p class="text-muted">Cargando...</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>  
+
+<!-- Modal: Detalles de red -->
+<div class="modal fade" id="modalDetallesRed" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Detalles del cliente: <span id="modalIdCliente"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <!-- 👇 AÑADIDO: table-responsive -->
+        <table class="table table-sm table-responsive">
+          <tbody>
+            <tr><th scope="row">IP</th><td id="modalIp"></td></tr>
+            <tr><th scope="row">MAC</th><td id="modalMac"></td></tr>
+            <tr><th scope="row">Máscara de red</th><td id="modalMascara"></td></tr>
+            <tr><th scope="row">Puerta de enlace</th><td id="modalGateway"></td></tr>
+            <tr><th scope="row">DNS</th><td id="modalDns"></td></tr>
+            <tr><th scope="row">Proxy activo</th><td id="modalProxyActivo"></td></tr>
+            <tr><th scope="row">Servidor de proxy</th><td id="modalProxyServidor"></td></tr>
+            <!-- 👇 NUEVA FILA: Exclusiones en un textarea -->
+            <tr>
+              <th scope="row">Exclusiones de proxy</th>
+              <td>
+                <textarea id="modalProxyExclusiones" 
+                          class="form-control" 
+                          rows="3" 
+                          readonly 
+                          style="width: 100%; max-width: 100%; resize: none; font-family: monospace; font-size: 0.875rem;">
+                </textarea>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Modal: Impresoras -->
+    <div class="modal fade" id="modalImpresoras" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Impresoras de: <span id="modalImpresorasId"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div id="impresorasContent">
+              <p class="text-muted">Cargando...</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal: Progreso -->
     <div class="modal fade progress-modal" id="modalProgreso" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -466,16 +539,11 @@ $resultado_envio = $mensajes['resultado_envio'] ?? null;
         </div>
       </div>
     </div>
-
   </main>
 
-  <!-- ==========================
-       SCRIPTS
-       ========================== -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/app.js"></script>
   <script>
-    // Al cargar la página, ajusta visibilidad de bloques según la acción seleccionada
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof window.mostrarOpciones === 'function') window.mostrarOpciones();
     });
